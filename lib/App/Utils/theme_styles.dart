@@ -6,11 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 class ThemeStyles {
 
 
-  // static const Color primary = Color(0xFF0095DA);
-  static const Color primary = Color(0xFF004CFF);
-  static const Color primaryAccentColor = Color(0xFF70CFFF);
-  static const Color scaffoldBackground = Color(0xFFEEEEEE);
 
+  static const Color primary = Color(0xFF3F69FF);
+  static const Color scaffoldBackgroundAccentColor = Color(0xFFf1f1f1);
   static const Color primaryTextColor = Color(0xFF3D3D3D);
   static const Color secondaryTextColor = Color(0xFF6C6C6C);
 
@@ -28,14 +26,6 @@ class ThemeStyles {
   static const Color gray = Color(0xFFE1E1E1);
 
   static const Color disabledColor = Colors.black38;
-
-  static const Gradient blueButtonGradient = LinearGradient(
-    colors: [Color(0xFFF15A24), Color(0xFFD8A000)],
-    stops: [0.25, 0.75],
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
-  );
-
 
 
   static ThemeData lightTheme = ThemeData(

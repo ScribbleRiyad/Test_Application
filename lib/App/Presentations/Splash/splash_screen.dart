@@ -36,7 +36,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
     Future.delayed(const Duration(seconds: 2), () {
 
-        context.goNamed(RouteName.applicationScreen);
+        context.goNamed(RouteName.welcomeScreen);
 
     });
 
@@ -46,7 +46,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return  const Scaffold(
+    return Scaffold(
       backgroundColor: ThemeStyles.whiteColor,
       body: Padding(
         padding: EdgeInsets.all(20.0),
@@ -55,8 +55,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CustomTextWidget(text: "Welcome to ", color: ThemeStyles.primaryTextColor,fontSize: 18, fontWeight:FontWeight.bold),
-                CustomTextWidget(text: "Test App", color: ThemeStyles.primaryTextColor,fontSize: 18,fontWeight:FontWeight.bold),
+                Image.asset('assets/logo/tasks 1.png'),
+                CustomTextWidget(text: "Welcome to Sensor and Test App", color: ThemeStyles.primaryTextColor,fontSize: 18, fontWeight:FontWeight.bold),
+
               ],
             )
         ),
