@@ -1,4 +1,5 @@
 
+
 import '../../Utils/theme_styles.dart';
 import '../../Widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +62,9 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                     buttonWidth: 328,
                     buttonColor: Color(0xff3F69FF),
                     textColor: ThemeStyles.whiteColor,),
+
+
+
                 ],
               ),
             ),

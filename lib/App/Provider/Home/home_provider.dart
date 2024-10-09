@@ -1,91 +1,109 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:intl/intl.dart';
+import 'package:test_app/App/Utils/utils.dart';
 import '../../Model/Task/task_model.dart';
-import '../../Repository/Home/home_repo.dart';
+import '../../Notification/local_notification.dart';
 final homeScreenController =
 ChangeNotifierProvider((ref) => HomeProvider());
 
+
+
 class HomeProvider extends ChangeNotifier {
-  HomeRepository homeRepository = HomeRepository();
-
-
-
-  final List<TaskModel> _tasks = [];
+  final List<TaskModel> tasks = [];
   final storage = GetStorage();
 
-  List<TaskModel> get tasks => _tasks;
 
 
-  void _loadTasksFromStorage() {
-  List<dynamic> storedTasks = storage.read('tasks') ?? [];
-  _tasks.addAll(storedTasks.map((e) => TaskModel.fromJson(e)).toList());
-  notifyListeners();
+
+  HomeProvider() {
+    loadTasksFromStorage();
+    // checkForDueTasks();
+    notifyListeners();
   }
 
+  // Load tasks from GetStorage
+  void loadTasksFromStorage() {
+    List<dynamic> storedTasks = storage.read('tasks') ?? [];
+    tasks.clear(); // Clear any existing tasks
+    tasks.addAll(storedTasks.map((e) => TaskModel.fromJson(e)).toList());
+    notifyListeners(); // Notify listeners about changes
+  }
+
+  // Save tasks to GetStorage
+  void saveTasksToStorage() {
+    storage.write('tasks', tasks.map((e) => e.toJson()).toList());
+  }
+
+  // Add a new task
   void addTask(TaskModel task) {
-  _tasks.add(task);
-  _saveTasksToStorage();
-  notifyListeners();
+    tasks.add(task);
+    scheduleTaskNotification(task);
+    notifyListeners();
   }
 
-  void removeTask(TaskModel task) {
-  _tasks.remove(task);
-  _saveTasksToStorage();
-  notifyListeners();
+  // Remove a task
+  void removeTask(TaskModel task, { context}) {
+    tasks.remove(task);
+    Utils.customSnackBar(context: context, snackText: "Task Deleted Successfully");
+    saveTasksToStorage();
+    notifyListeners();
   }
 
-  void completeTask(TaskModel task) {
-  task.isCompleted = true;
-  _saveTasksToStorage();
-  notifyListeners();
+  // Mark a task as completed
+  void completeTask(TaskModel task, { context}) {
+    task.isCompleted = !task.isCompleted;
+    if(task.isCompleted == true){
+      Utils.customSnackBar(context: context, snackText: "Task completed");
+    }else if(task.isCompleted == false){
+      Utils.customSnackBar(context: context, snackText: "Task not completed yet");
+    }// Toggle completion status
+    saveTasksToStorage();
+    notifyListeners();
   }
 
-  void _saveTasksToStorage() {
-  storage.write('tasks', _tasks.map((e) => e.toJson()).toList());
-  }
 
-  final FlutterLocalNotificationsPlugin _notificationsPlugin =
-  FlutterLocalNotificationsPlugin();
 
-  // Initialize notifications
-  TaskNotifier() {
-    _initializeNotifications();
-    _loadTasksFromStorage();
-    _checkForDueTasks();
-  }
+  // void checkForDueTasks() {
+  //   final DateFormat formatter = DateFormat('dd-MM-yyyy, HH:mm a');  // Adjust to your format
+  //   final DateTime now = DateTime.now();
+  //
+  //   for (var task in tasks) {
+  //     try {
+  //       // Parse the stored date string into DateTime
+  //       final DateTime taskDueDate = formatter.parse(task.dueDate);
+  //
+  //       // Check if task is due today (same date, ignoring time) and not completed
+  //       if (_isSameDay(taskDueDate, now) && !task.isCompleted) {
+  //         _showNotification(task.heading);
+  //       }
+  //     } catch (e) {
+  //       // Handle parse error, in case the stored date is invalid
+  //       print('Error parsing task due date: ${task.dueDate}. Error: $e');
+  //     }
+  //   }
+  // }
 
-  void _initializeNotifications() {
-    const initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-    final initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
-    _notificationsPlugin.initialize(initializationSettings);
-  }
+// // Helper method to compare if two DateTime objects are on the same day
+//   bool _isSameDay(DateTime date1, DateTime date2) {
+//     return date1.year == date2.year &&
+//         date1.month == date2.month &&
+//         date1.day == date2.day;
+//   }
 
-  // Schedule notification for tasks due today
-  void _checkForDueTasks() {
-    for (var task in _tasks) {
-      if (task.dueDate.isAtSameMomentAs(DateTime.now()) && !task.isCompleted) {
-        _showNotification(task.heading);
-      }
-    }
-  }
 
-  void _showNotification(String taskHeading) async {
-    const androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your_channel_id', 'your_channel_name',
-        importance: Importance.max, priority: Priority.high);
-    const platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-    await _notificationsPlugin.show(
-      0,
-      'Task Due Today',
-      'You have a task "$taskHeading" due today!',
-      platformChannelSpecifics,
-      payload: 'Default_Sound',
+
+  // Schedule notification for task due date
+  void scheduleTaskNotification(TaskModel task) {
+    final DateFormat formatter = DateFormat('dd-MM-yyyy, HH:mm a');
+    PushLocalNotifications.scheduleNotification(
+      title: 'Task Reminder',
+      body: 'Your task "${task.heading}" is due.',
+      payload: task.details,
+      scheduledTime: formatter.parse(task.dueDate), // Assume task has a dueDate field
     );
   }
-
-
-
 }
+
 
