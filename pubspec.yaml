@@ -47,6 +47,8 @@ dependencies:
   get_storage: ^2.1.1
   intl: ^0.19.0
   timezone: ^0.9.4
+  sensors_plus: ^6.0.1
+  fl_chart: ^0.69.0
 
 
 dev_dependencies:

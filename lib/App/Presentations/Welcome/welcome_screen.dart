@@ -5,7 +5,7 @@ import '../../Widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../Route/route_name.dart';
+
 
 
 class WelcomeScreen extends ConsumerStatefulWidget {
@@ -50,7 +50,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                   const SizedBox(height: 20,),
                   CustomButton(
                     onTap: (){
-                      context.goNamed(RouteName.homeScreen);
+                      context.push('/sensorScreen');
                     },
                     iconColor: ThemeStyles.whiteColor,
                     buttonText: "Sensor Tracking",
