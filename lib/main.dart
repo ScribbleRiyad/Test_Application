@@ -11,7 +11,7 @@ import 'App/Utils/theme_styles.dart';
 void main() async {
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
-  PushLocalNotifications.localNotiInit();
+  PushLocalNotifications.init();
   runApp( const ProviderScope( child: TestApp(),));
 }
 

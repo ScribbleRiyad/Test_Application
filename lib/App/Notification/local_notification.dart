@@ -3,50 +3,60 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 
 class PushLocalNotifications {
+  static final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin();
 
-  static final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static Future<void> init() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
 
-
-  static Future<void> localNotiInit() async {
-    tz.initializeTimeZones(); // Initialize timezone data
-    _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
-
-    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid,
-
-
+    const InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
     );
-    await _flutterLocalNotificationsPlugin.initialize(initializationSettings,);
+
+    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    // Initialize timezone data
+    tz.initializeTimeZones();
   }
 
-
+  // Schedule a notification with a unique ID
   static Future<void> scheduleNotification({
     required String title,
     required String body,
     required String payload,
     required DateTime scheduledTime,
+    int? notificationId, // Optional notification ID
   }) async {
-    final tz.TZDateTime scheduledDate = tz.TZDateTime.from(scheduledTime, tz.local);
+    try {
+      // Convert DateTime to TZDateTime
+      final tz.TZDateTime scheduledTZDateTime = tz.TZDateTime.from(
+          scheduledTime,
+          tz.local // Use local timezone
+      );
 
-    const AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
-      'your_channel_id',
-      'your_channel_name',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-    const NotificationDetails notificationDetails = NotificationDetails(android: androidNotificationDetails);
-
-    await _flutterLocalNotificationsPlugin.zonedSchedule(
-      0, // Notification ID, can be unique for each notification
-      title,
-      body,
-      scheduledDate,
-      notificationDetails,
-      payload: payload,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      androidAllowWhileIdle: true, // To wake up the device when in idle state
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-    );
+      await _flutterLocalNotificationsPlugin.zonedSchedule(
+        notificationId ?? DateTime.now().millisecondsSinceEpoch, // Unique ID
+        title,
+        body,
+        scheduledTZDateTime, // The time at which to schedule the notification
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'your_channel_id', // Replace with your channel ID
+            'your_channel_name', // Replace with your channel name
+            channelDescription: 'Your channel description', // Replace with your channel description
+            importance: Importance.max,
+            priority: Priority.high,
+            showWhen: false,
+          ),
+        ),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    } catch (e) {
+      // Handle any errors
+      print('Error scheduling notification: $e');
+    }
   }
 }

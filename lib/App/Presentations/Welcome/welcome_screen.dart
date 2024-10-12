@@ -35,7 +35,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
 
                   CustomButton(
                     onTap: (){
-                    context.push('/homeScreen');
+                    context.push('/toDoScreen');
                   },
                     iconColor: ThemeStyles.blackColor,
                     buttonText: "A To-Do List",

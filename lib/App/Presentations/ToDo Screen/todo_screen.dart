@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:test_app/App/Presentations/ToDo%20Screen/todo_details_screen.dart';
 import 'package:test_app/App/Provider/Home/home_provider.dart';
 import 'package:test_app/App/Utils/theme_styles.dart';
 import 'package:test_app/App/Widgets/custom_button.dart';
@@ -9,14 +10,14 @@ import 'package:test_app/App/Widgets/custom_form_field.dart';
 import 'package:test_app/App/Widgets/custom_text_widget.dart';
 import '../../Model/Task/task_model.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+class ToDoScreen extends ConsumerStatefulWidget {
+  const ToDoScreen({super.key});
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<ToDoScreen> createState() => _ToDoScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _ToDoScreenState extends ConsumerState<ToDoScreen> {
 
   dynamic homeScreenProvider;
 
@@ -28,8 +29,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
+
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: ThemeStyles.scaffoldBackgroundAccentColor,
@@ -56,91 +60,101 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             final task = ref
                 .watch(homeScreenController)
                 .tasks[index];
-            return Padding(
-              padding: const EdgeInsets.only(left: 5, right: 5),
-              child: Card(
-
-                  color: ThemeStyles.whiteColor,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(07)
+            return InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TaskDetailScreen(task: task),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10, right: 10, top: 10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 5, right: 5),
+                child: Card(
 
-                                SvgPicture.asset("assets/Svg/align-left.svg",
-                                  colorFilter: const ColorFilter.mode(
-                                      ThemeStyles.primaryTextColor,
-                                      BlendMode.srcIn),),
-                                const SizedBox(width: 5,),
-                                LimitedBox(
-                                    maxWidth: 150,
-                                    child: CustomTextWidget(text: task.heading,
-                                      maxLines: 1,
-                                      color: ThemeStyles.primaryTextColor,
-                                      fontWeight: FontWeight.bold,)),
-                              ],
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CustomTextWidget(text: "Completed",
-                                  color: ThemeStyles.primaryTextColor,),
-                                Switch(
-                                  value: task.isCompleted,
-                                  onChanged: (value) {
-                                    ref.watch(homeScreenController)
-                                        .completeTask(task, context: context);
-                                  },
-                                ),
-
-                              ],
-                            ),
-
-
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                SvgPicture.asset("assets/Svg/calendar.svg",
-                                  colorFilter: const ColorFilter.mode(
-                                      ThemeStyles.primary, BlendMode.srcIn),),
-                                const SizedBox(width: 5,),
-                                CustomTextWidget(text: task.dueDate,
-                                  color: ThemeStyles.secondaryTextColor,),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                CustomTextWidget(text: "Delete",
-                                  color: ThemeStyles.primaryTextColor,),
-                                IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => showSimpleDialog(
-                                      task: task, context: context),
-
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-
-
-                      ],
+                    color: ThemeStyles.whiteColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(07)
                     ),
-                  )
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+
+                                  SvgPicture.asset("assets/Svg/align-left.svg",
+                                    colorFilter: const ColorFilter.mode(
+                                        ThemeStyles.primaryTextColor,
+                                        BlendMode.srcIn),),
+                                  const SizedBox(width: 5,),
+                                  LimitedBox(
+                                      maxWidth: 150,
+                                      child: CustomTextWidget(text: task.heading,
+                                        maxLines: 1,
+                                        color: ThemeStyles.primaryTextColor,
+                                        fontWeight: FontWeight.bold,)),
+                                ],
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  CustomTextWidget(text: "Completed",
+                                    color: ThemeStyles.primaryTextColor,),
+                                  Switch(
+                                    value: task.isCompleted,
+                                    onChanged: (value) {
+                                      ref.watch(homeScreenController)
+                                          .completeTask(task, context: context);
+                                    },
+                                  ),
+
+                                ],
+                              ),
+
+
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  SvgPicture.asset("assets/Svg/calendar.svg",
+                                    colorFilter: const ColorFilter.mode(
+                                        ThemeStyles.primary, BlendMode.srcIn),),
+                                  const SizedBox(width: 5,),
+                                  CustomTextWidget(text: task.dueDate,
+                                    color: ThemeStyles.secondaryTextColor,),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  CustomTextWidget(text: "Delete",
+                                    color: ThemeStyles.primaryTextColor,),
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () => showSimpleDialog(
+                                        task: task, context: context),
+
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+
+
+                        ],
+                      ),
+                    )
+                ),
               ),
             );
           },
@@ -289,41 +303,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
 
-                    const CustomTextWidget(text:
-                    'Are You Sure To Delete This Task',
-                      fontSize: 14.0,
-                      color: ThemeStyles.greenColor,
-                    ),
-                    const SizedBox(height: 60.0),
-                    CustomButton(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        buttonText: "Cancel",
-                        borderRadius: 7,
-                        buttonColor: ThemeStyles
-                            .redColor,
-                        isLoading: false,
-                        iconColor: ThemeStyles.whiteColor,
-                        assetName: "assets/Svg/cancel.svg"),
-                    const SizedBox(height: 20.0),
-                    CustomButton(
-                        onTap: () {
-                          Navigator.pop(context);
-                          ref.watch(homeScreenController).removeTask(
-                              task, context: context);
-                        },
+                const CustomTextWidget(text:
+                'Are You Sure To Delete This Task',
+                  fontSize: 14.0,
+                  color: ThemeStyles.greenColor,
+                ),
+                const SizedBox(height: 60.0),
+                CustomButton(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    buttonText: "Cancel",
+                    borderRadius: 7,
+                    buttonColor: ThemeStyles
+                        .redColor,
+                    isLoading: false,
+                    iconColor: ThemeStyles.whiteColor,
+                    assetName: "assets/Svg/cancel.svg"),
+                const SizedBox(height: 20.0),
+                CustomButton(
+                    onTap: () {
+                      Navigator.pop(context);
+                      ref.watch(homeScreenController).removeTask(
+                          task, context: context);
+                    },
 
-                        buttonText: "Delete",
-                        buttonColor: ThemeStyles.primary,
-                        isLoading: false,
-                        borderRadius: 7,
-                        iconColor: ThemeStyles.whiteColor,
-                        assetName: "assets/Svg/delete.svg"),
+                    buttonText: "Delete",
+                    buttonColor: ThemeStyles.primary,
+                    isLoading: false,
+                    borderRadius: 7,
+                    iconColor: ThemeStyles.whiteColor,
+                    assetName: "assets/Svg/delete.svg"),
 
 
               ],

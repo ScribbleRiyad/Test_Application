@@ -19,11 +19,10 @@ class HomeProvider extends ChangeNotifier {
 
   HomeProvider() {
     loadTasksFromStorage();
-    // checkForDueTasks();
     notifyListeners();
   }
 
-  // Load tasks from GetStorage
+
   void loadTasksFromStorage() {
     List<dynamic> storedTasks = storage.read('tasks') ?? [];
     tasks.clear(); // Clear any existing tasks
@@ -31,19 +30,20 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about changes
   }
 
-  // Save tasks to GetStorage
+
   void saveTasksToStorage() {
     storage.write('tasks', tasks.map((e) => e.toJson()).toList());
   }
 
-  // Add a new task
+
   void addTask(TaskModel task) {
     tasks.add(task);
+    saveTasksToStorage();
     scheduleTaskNotification(task);
     notifyListeners();
   }
 
-  // Remove a task
+
   void removeTask(TaskModel task, { context}) {
     tasks.remove(task);
     Utils.customSnackBar(context: context, snackText: "Task Deleted Successfully");
@@ -51,7 +51,7 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Mark a task as completed
+
   void completeTask(TaskModel task, { context}) {
     task.isCompleted = !task.isCompleted;
     if(task.isCompleted == true){
@@ -65,36 +65,6 @@ class HomeProvider extends ChangeNotifier {
 
 
 
-  // void checkForDueTasks() {
-  //   final DateFormat formatter = DateFormat('dd-MM-yyyy, HH:mm a');  // Adjust to your format
-  //   final DateTime now = DateTime.now();
-  //
-  //   for (var task in tasks) {
-  //     try {
-  //       // Parse the stored date string into DateTime
-  //       final DateTime taskDueDate = formatter.parse(task.dueDate);
-  //
-  //       // Check if task is due today (same date, ignoring time) and not completed
-  //       if (_isSameDay(taskDueDate, now) && !task.isCompleted) {
-  //         _showNotification(task.heading);
-  //       }
-  //     } catch (e) {
-  //       // Handle parse error, in case the stored date is invalid
-  //       print('Error parsing task due date: ${task.dueDate}. Error: $e');
-  //     }
-  //   }
-  // }
-
-// // Helper method to compare if two DateTime objects are on the same day
-//   bool _isSameDay(DateTime date1, DateTime date2) {
-//     return date1.year == date2.year &&
-//         date1.month == date2.month &&
-//         date1.day == date2.day;
-//   }
-
-
-
-  // Schedule notification for task due date
   void scheduleTaskNotification(TaskModel task) {
     final DateFormat formatter = DateFormat('dd-MM-yyyy, HH:mm a');
     PushLocalNotifications.scheduleNotification(
@@ -104,6 +74,11 @@ class HomeProvider extends ChangeNotifier {
       scheduledTime: formatter.parse(task.dueDate), // Assume task has a dueDate field
     );
   }
-}
 
+
+
+
+
+
+}
 
